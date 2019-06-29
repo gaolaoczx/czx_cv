@@ -1,0 +1,34 @@
+{
+    "name": "glczx/cv",
+    "description": "simple resume system",
+    "type": "project",
+    "authors": [
+        {
+            "name": "gaolaoczx",
+            "email": "850893371@qq.com"
+        }
+    ],
+    "autoload": 
+    {
+        "files": ["lib/function.php","config/config.php"],
+        "psr-4": 
+        {
+            "GaoLao\\Controller\\":"controller/"
+        }
+    },
+    "require": 
+    {
+        "erusev/parsedown":"*"
+    },
+    "require-dev":
+    {
+        "consolidation/robo": "^1.4",
+        "codeception/codeception": "^3.0"
+    },
+    "repositories": {
+        "packagist": {
+            "type": "composer",
+            "url": "https://packagist.laravel-china.org"
+        }
+    }
+}

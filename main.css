@@ -91,3 +91,8 @@ h1.title
     border: 1px solid #eee;
     padding: 5px;
 }
+
+.page-box
+{
+    padding:10px;
+}

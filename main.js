@@ -1,7 +1,7 @@
 
 function send_form ( form_id )
 {
-    // alert(form_id);
+    // alert($("#"+form_id).attr("action"));
     $.post( $("#"+form_id).attr("action") , $("#"+form_id).serialize() , function ( data )
     {
         // alert(data);
@@ -17,7 +17,7 @@ function delete_confirm ( resume_id )
     // alert(resume_id);
     if ( confirm("真的要删除简历吗？") )
     {
-        $.post("./resume_delete.php?id="+resume_id, null ,function ( data )
+        $.post("./?m=resume&a=delete&id="+resume_id, null ,function ( data )
         {
             if ( data == 'done')
             {
