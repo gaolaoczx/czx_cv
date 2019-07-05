@@ -11,10 +11,8 @@ function active_flag( $m , $a )
 
 function is_login()
 {
-    if( !headers_sent() )
-    {
+    if( !headers_sent())
         session_start(); 
-    }
     
     return intval( $_SESSION['uid'] ) > 0 ;
 }
@@ -37,6 +35,22 @@ function v($key)
 function e( $msg )
 {
     throw new Exception($msg);
+}
+
+function send_json( $data )
+{
+    $ret['data'] = $data;
+    $ret['code'] = 0;
+    $ret['time'] = date("Y-m-d H:i:s");
+    echo json_encode( $ret ,JSON_UNESCAPED_UNICODE);
+}
+
+function send_err( $err )
+{
+    $ret['err'] = $err;
+    $ret['code'] = 1;
+    $ret['time'] = date("Y-m-d H:i:s");
+    echo json_encode( $ret ,JSON_UNESCAPED_UNICODE);
 }
 
 function render()
@@ -108,6 +122,12 @@ function pdo()
     }
 
     return $GLOBALS['CV_PDO'];
+}
+
+function get_last_id()
+{
+    $pdo = pdo();
+    return $pdo->lastInsertId();
 }
 
 function get_data($sql , $data = null , $error_number = null , $notice = null)

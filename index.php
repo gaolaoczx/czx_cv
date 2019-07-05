@@ -30,5 +30,6 @@ try
 } 
 catch (Exception $e) 
 {
-    die($e->getMessage());
+    send_err(['msg'=>($e->getMessage())]);
+    // die($e->getMessage());
 }

@@ -6,11 +6,31 @@ class Resume
 {
     function check_login()
     {
-        if( !is_login() )
+        $token = v('token');
+
+        if( !headers_sent())
+            session_start(); 
+
+        if( !$token )
         {
-            header("location:./?m=user&a=login");
-            e("请先<a href='./?m=user&amp;a=login'>登录</a>再进行简历相关操作");
+            e("token为空");
             exit;
+        }
+
+        if( $token && strlen($token) > 0 && $token != session_id())
+        {
+            e("请正确登录再进行简历相关操作,token:".$token);
+            exit;
+        }
+
+        if( $token && strlen($token) > 0 && $token == session_id())
+        {
+            if( !is_login() )
+            {
+                // header("location:./?m=user&a=login");
+                e("请先登录再进行简历相关操作");
+                exit;
+            }
         }
     }
 
@@ -20,7 +40,8 @@ class Resume
         $data['resume_list'] = get_data( $sql );
         $data['title'] = '最新简历';
 
-        return render_layout( $data );
+        send_json( $data );
+        // return render_layout( $data );
     }
 
     function list()
@@ -31,7 +52,8 @@ class Resume
         $data['resume_list'] = get_data( $sql , [ intval($_SESSION['uid']) ]);
         $data['title'] = "我的简历";   
     
-        return render_layout( $data );
+        send_json( $data['resume_list'] );
+        // return render_layout( $data );
     }
 
     function add()
@@ -39,7 +61,9 @@ class Resume
         $this->check_login();
 
         $data['title'] = "添加简历";   
-        return render_layout( $data );
+
+        send_json(data);
+        // return render_layout( $data );
     }
 
     function save()
@@ -56,8 +80,11 @@ class Resume
         $data = [$title , $content , intval($_SESSION['uid']) , date("Y-m-d H:i:s") ];
         run_sql( $sql , $data , 1062 , "简历标题已存在" );
     
-        echo $info = "简历保存成功<script>location='/?m=resume&a=list'</script>";
-        return $info;
+        $rid = get_last_id();
+
+        send_json(['rid'=>$rid ,'msg'=>'简历保存成功']);
+        // echo $info = "简历保存成功<script>location='/?m=resume&a=list'</script>";
+        // return $info;
     }
 
     function detail()
@@ -66,16 +93,22 @@ class Resume
 
         $sql = "SELECT * FROM `resume` WHERE `id` = ? AND `is_deleted` = 0 LIMIT 1";
         $resume_list = get_data( $sql , [ intval($_REQUEST['id']) ] );
-        $resume = $resume_list[0];
+
+        if( !$resume_list )
+        {
+            e("简历不存在或已删除");
+        }
  
         //标题需过滤html标签
+        $resume = $resume_list[0];
         $resume['title'] = strip_tags( $resume['title'] );
         $resume['content'] = ( new \Parsedown() )->text( $resume['content'] );
 
-        $data['resume'] = $resume;
-        $data['title'] = $resume['title'];   
+        send_json($resume);
+        // $data['resume'] = $resume;
+        // $data['title'] = $resume['title'];   
     
-        return render_layout( $data );
+        // return render_layout( $data );
     }
 
     function modify()
@@ -110,8 +143,9 @@ class Resume
         $data = [$title , $content , $id , intval($_SESSION['uid']) ];
         run_sql( $sql , $data );
     
-        echo $info = "简历修改成功<script>location='/?m=resume&a=list'</script>";
-        return $info;
+        send_json(['msg'=>'简历修改成功']);
+        // echo $info = "简历修改成功<script>location='/?m=resume&a=list'</script>";
+        // return $info;
     }
 
     function delete()
@@ -124,7 +158,8 @@ class Resume
         $sql = "UPDATE `resume` SET `is_deleted` = 1,`title`=CONCAT(`title`,?) WHERE `id` = ? AND `uid` = ? AND `is_deleted` = 0 LIMIT 1";
         run_sql( $sql , [ '_DEL_'.time() , $id , intval($_SESSION['uid']) ] );
 
-        echo $info = "done";
-        return $info;
+        send_json( ['msg'=>'done'] );
+        // echo $info = "done";
+        // return $info;
     }
 }

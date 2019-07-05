@@ -7,7 +7,8 @@ class User
     function reg()
     {
         $data['title'] = "用户注册";   
-        render_layout($data);
+        send_json( $data );
+        // render_layout($data);
     }
 
     function save()
@@ -34,13 +35,14 @@ class User
         $data = [$email , password_hash($password , PASSWORD_DEFAULT) , date("Y-m-d H:i:s") ];
         run_sql( $sql , $data , 1062 , "Email地址已被注册");
 
-        echo $info = "注册成功<script>location='./?m=user&a=login'</script>";
-        return $info;
+        send_json(['msg'=>'注册成功']);
+        // echo $info = "注册成功<script>location='./?m=user&a=login'</script>";
+        // return $info;
     }
 
     function login()
     {
-        $data['title'] = "用户登入";   
+        $data['title'] = "用户登入";  
         render_layout($data);
     }
 
@@ -72,8 +74,10 @@ class User
         $_SESSION['email'] = $email;
         $_SESSION['uid'] = $user['id'];
 
-        e("登录成功<script>location='./?m=resume&a=list'</script>");
-        return true;
+        $token = session_id();
+        send_json(['token'=>$token,'msg'=>'登录成功']);
+        // e("登录成功<script>location='./?m=resume&a=list'</script>");
+        // return true;
     }
 
     function logout()
@@ -86,6 +90,7 @@ class User
             unset($_SESSION[$key]);
         }
         
-        header("location:./");
+        // header("location:./");
+        send_json(['msg'=>'done']);
     }
 }

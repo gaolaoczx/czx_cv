@@ -9,6 +9,7 @@ modules:
     enabled:
         - WebDriver:
             url: http://localhost:8088
+            # url: http://www.glchenzexin.com
             browser: chrome
             port: 4444
         - \Helper\Acceptance
