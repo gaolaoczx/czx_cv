@@ -28,7 +28,7 @@ class apitestCest
         $I->sendPOST('/');
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); 
         $I->seeResponseIsJson();
-        $I->seeResponseContains('最新简历');
+        $I->seeResponseContains('data');
 
         // 用户注册
         $I->sendPOST('/?m=user&a=save',['email'=>$email,'password'=>$password,'pw_confirm'=>$password]);
@@ -44,8 +44,9 @@ class apitestCest
 
         $ret = json_decode( $I->grabResponse() ,true );
         $token = $ret['data']['token'];
-
+        // $token = 'asdfj';
         // print_r("token:".$token);
+
         // 创建简历
         $I->sendPOST('/?m=resume&a=save',['token'=>"$token", 'title'=>$title, 'content'=>$content]);
         $I->seeResponseCodeIs(\Codeception\Util\HttpCode::OK); 
@@ -54,7 +55,6 @@ class apitestCest
 
         $ret = json_decode( $I->grabResponse() , true  );
         $rid = $ret['data']['rid'];
-
         // print_r("rid:".$rid);
 
         // 查看简历

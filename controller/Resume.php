@@ -8,22 +8,19 @@ class Resume
     {
         $token = v('token');
 
-        if( !headers_sent())
-            session_start(); 
-
         if( !$token )
         {
             e("token为空");
             exit;
         }
 
-        if( $token && strlen($token) > 0 && $token != session_id())
+        if( $token && strlen($token) > 0 )
         {
-            e("请正确登录再进行简历相关操作,token:".$token);
-            exit;
+            session_id( $token  );
+            session_start();  
         }
 
-        if( $token && strlen($token) > 0 && $token == session_id())
+        // if( $token && strlen($token) > 0 && $token == session_id())
         {
             if( !is_login() )
             {
@@ -40,7 +37,7 @@ class Resume
         $data['resume_list'] = get_data( $sql );
         $data['title'] = '最新简历';
 
-        send_json( $data );
+        send_json( $data['resume_list'] );
         // return render_layout( $data );
     }
 
@@ -62,8 +59,8 @@ class Resume
 
         $data['title'] = "添加简历";   
 
-        send_json(data);
-        // return render_layout( $data );
+        // send_json(data);
+        return render_layout( $data );
     }
 
     function save()
@@ -102,12 +99,11 @@ class Resume
         //标题需过滤html标签
         $resume = $resume_list[0];
         $resume['title'] = strip_tags( $resume['title'] );
-        $resume['content'] = ( new \Parsedown() )->text( $resume['content'] );
+        // $resume['content'] = ( new \Parsedown() )->text( $resume['content'] );
 
         send_json($resume);
         // $data['resume'] = $resume;
         // $data['title'] = $resume['title'];   
-    
         // return render_layout( $data );
     }
 

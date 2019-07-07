@@ -39,17 +39,25 @@ function e( $msg )
 
 function send_json( $data )
 {
-    $ret['data'] = $data;
-    $ret['code'] = 0;
-    $ret['time'] = date("Y-m-d H:i:s");
-    echo json_encode( $ret ,JSON_UNESCAPED_UNICODE);
+    send_data( 0 , $data );
 }
 
 function send_err( $err )
 {
-    $ret['err'] = $err;
-    $ret['code'] = 1;
+    send_data( 1 , $err );
+}
+
+function send_data( $code , $info )
+{
+    if( $code == 1 ) $ret['err'] = $info;
+    else $ret['data'] = $info;
+    
+    $ret['code'] = $code;
     $ret['time'] = date("Y-m-d H:i:s");
+
+    header("Access-Control-Allow-Origin: *"); // 允许任意域名发起的跨域请求  
+    header("Access-Control-Allow-Methods: POST, GET, OPTIONS, PUT, DELETE");
+    header('Access-Control-Allow-Headers: x-requested-with,content-type');
     echo json_encode( $ret ,JSON_UNESCAPED_UNICODE);
 }
 

@@ -7,8 +7,8 @@ class User
     function reg()
     {
         $data['title'] = "用户注册";   
-        send_json( $data );
-        // render_layout($data);
+        // send_json( $data );
+        render_layout($data);
     }
 
     function save()
