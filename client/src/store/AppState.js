@@ -1,15 +1,11 @@
 import { observable , action } from 'mobx'
-import $ from 'jquery';
 import axios from 'axios';
 
 var host='http://localhost:8088';
 
+// 数据统一放在此处
 class AppState
 {
-    @observable reg_ok = false;
-    @observable added = false;
-    @observable modified = false;
-    @observable deleted = false;
     @observable token = "";
     @observable curr_resume_id = "";
     @observable curr_resume_title = "";
@@ -22,95 +18,74 @@ class AppState
         if( localStorage.getItem('token') ) this.token = localStorage.getItem('token');
     }
 
-    @action 
-    reg( email , password, pw_confirm) 
+    async reg( email , password, pw_confirm) 
     {
-        $.post( host+'/?m=user&a=save',{'email':email,'password':pw_confirm,'pw_confirm':password}, (data)=>
-        {
-            // console.log('data:'+data);
-            if( data.code === 0 && data.data && data.data.msg && data.data.msg === '注册成功' )
-                this.reg_ok = true;
-        } , 'json');
+        var params = new URLSearchParams();
+        params.append("email" , email);
+        params.append("password" , password);
+        params.append("pw_confirm" , pw_confirm);
+        const { data } = await axios.post( host+'/?m=user&a=save',params);
+        return data;
     }
 
     @action 
-    login( email , password) 
+    async login( email , password) 
     {
-        $.post( host+'/?m=user&a=login_check',{'email':email,'password':password}, (data)=>
+        var params = new URLSearchParams();
+        params.append('email',email);
+        params.append('password',password);
+        const {data} = await axios.post( host+'/?m=user&a=login_check',params);
+
+        if( data.code === 0  && data.data && data.data.token )
         {
-            if( data.code === 0 && data.data && data.data.token )
-            {
-                this.token = data.data.token;
-                localStorage.setItem( 'token' , this.token );
-            }
-            // console.log('login token:'+this.token);
-        } , 'json');
+            this.token = data.data.token;
+            localStorage.setItem( 'token' , this.token );
+        }
+
+        console.log('login token:'+this.token);
+        return data;
     }
     
     @action 
-    logout( ) 
+    async logout( ) 
     {
-        $.post( host+'/?m=user&a=logout',{ }, (data)=>
+        var params = new URLSearchParams();
+        const {data} = await axios.post( host+'/?m=user&a=logout',params);
+
+        if( data.code === 0 && data.data && data.data.msg === 'done' )
         {
-            if( data.code === 0 && data.data && data.data.msg === 'done' )
-            {
-                this.token = '';
-                this.reg_ok = false;
-                this.deleted = false;
-                this.added = false;
-                this.modified = false;
-                localStorage.setItem( 'token' , this.token );
-            }
-            // console.log('token:'+this.token);
-        } , 'json');
+            this.token = '';
+            localStorage.setItem( 'token' , this.token );
+        }
+
+        return data;
+    }
+
+    async resume_add( title , content ) 
+    {
+        var params = new URLSearchParams();
+        params.append("token" , this.token);
+        params.append('title',title);
+        params.append('content',content);
+        const {data} = await axios.post( host+'/?m=resume&a=save',params);
+        
+        return data;
+    }
+
+    async resume_modify( id , title , content ) 
+    {
+        var params = new URLSearchParams();
+        params.append("token" , this.token);
+        params.append('id',id);
+        params.append('title',title);
+        params.append('content',content);
+        const {data} = await axios.post( host+'/?m=resume&a=update',params);
+
+        return data;
     }
 
     @action 
-    resume_add( title , content ) 
-    {
-        $.post( host+'/?m=resume&a=save',{'token':this.token,'title':title,'content':content}, (data)=>
-        {
-            console.log("data:"+data.code);
-            if( data.code === 0 && data.data)
-            {
-                this.added = true ;
-            }
-            // console.log("my_list:"+this.my_resume_list);
-        } , 'json');
-    }
-
-    @action 
-    resume_modify( id , title , content ) 
-    {
-        $.post( host+'/?m=resume&a=save',{'token':this.token, 'id':id,'title':title,'content':content}, (data)=>
-        {
-            // console.log("data:"+data.code);
-            if( data.code === 0 && data.data)
-            {
-                this.modified = true ;
-            }
-            // console.log("my_list:"+this.my_resume_list);
-        } , 'json');
-    }
-
-    @action 
-    get_curr_resume( rid ) 
-    {
-        $.post( host+'/?m=resume&a=detail&id='+rid, { }, (data)=>
-        {
-            // console.log("data-id:"+data.data.id);
-            if( data.code === 0 && data.data )
-            {
-                this.curr_resume_id = data.data.id;
-                this.curr_resume_title = data.data.title;
-                this.curr_resume_content = data.data.content;
-            }
-            // console.log("resume_title:"+this.curr_resume_title);
-        } , 'json');
-    }
-
-    @action 
-    async get_resume( id )
+    async get_curr_resume( id )
     {
         var params = new URLSearchParams();
         params.append("id" , id);
@@ -121,46 +96,54 @@ class AppState
             this.current_resume_id = data.data.id;
             this.current_resume_title = data.data.title;
             this.current_resume_content = data.data.content;
+            console.log(this.current_resume_title);
         }
+
         return data ;
     }
 
     @action 
-    get_my_resume( ) 
+    async get_my_resume( ) 
     {
-        $.post( host+'/?m=resume&a=list',{'token':this.token}, (data)=>
+        var params = new URLSearchParams();
+        params.append('token',this.token);
+        const { data } = await axios.post( host+'/?m=resume&a=list',params);
+
+        // console.log("data:"+data.err.msg);
+        if( data.code === 0 && data.data)
         {
-            // console.log("data:"+data.err.msg);
-            if( data.code === 0 && data.data)
-            {
-                this.my_resume_list = data.data;
-            }
-            // console.log("my_list:"+this.my_resume_list);
-        } , 'json');
+            this.my_resume_list = data.data;
+            return this.my_resume_list;
+        }
+
+        return false;
     }
 
     @action 
-    get_all_resume( ) 
+    async get_all_resume( ) 
     {
-        $.post( host+'/?m=resume&a=index',{'token':this.token}, (data)=>
+        var params = new URLSearchParams();
+        params.append('token',this.token);
+        const { data } = await axios.post( host+'/?m=resume&a=index',params);
+
+        // console.log("data:"+data.err.msg);
+        if( data.code === 0 && data.data)
         {
-            if( data.code === 0 && data.data)
-            {
-                this.all_resume_list = data.data;
-            }
-            // console.log("all_list:"+this.all_resume_list);
-        } , 'json');
+            this.all_resume_list = data.data;
+            return this.all_resume_list;
+        }
+
+        return false;
     }
 
-    @action 
-    delete( rid ) 
+    async delete( id ) 
     {
-        $.post( host+'/?m=resume&a=delete',{'token':this.token,'id':rid}, (data)=>
-        {
-            console.log(data.data.msg );
-            if( data.code === 0 && data.data && data.data.msg && data.data.msg === 'done' )
-                this.deleted = true;
-        } , 'json');
+        var params = new URLSearchParams();
+        params.append('token',this.token);
+        params.append('id',id);
+        const { data } = await axios.post( host+'/?m=resume&a=delete',params);
+
+        return data;
     }
 
 }

@@ -16,10 +16,12 @@ class Resume
 
         if( $token && strlen($token) > 0 )
         {
+            // 重置当前session
             session_id( $token  );
             session_start();  
         }
 
+        // 放弃直接对比sessionid，重新设置当前session，才能正常访问uid
         // if( $token && strlen($token) > 0 && $token == session_id())
         {
             if( !is_login() )
@@ -99,6 +101,7 @@ class Resume
         //标题需过滤html标签
         $resume = $resume_list[0];
         $resume['title'] = strip_tags( $resume['title'] );
+        // 不解析markdown，直接返回，由前端解析
         // $resume['content'] = ( new \Parsedown() )->text( $resume['content'] );
 
         send_json($resume);

@@ -8,7 +8,11 @@ actor: AcceptanceTester
 modules:
     enabled:
         - WebDriver:
-            url: http://localhost:8088
+            # spa client
+            url: http://localhost:3000  
+            # 本地重构版
+            # url: http://localhost:8088
+            # 服务器版
             # url: http://www.glchenzexin.com
             browser: chrome
             port: 4444

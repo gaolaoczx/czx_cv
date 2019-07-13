@@ -1,9 +1,8 @@
 import React, { Component }  from 'react';
-import { Button, Form, FormGroup, Label, Input} from 'reactstrap';
+import { Button, Form, FormGroup,Input} from 'reactstrap';
 import { observer, inject } from 'mobx-react';
 import { Redirect } from 'react-router'
 import { withRouter } from "react-router";
-// import ReactMarkdown from "react-markdown";
 
 @withRouter
 @inject("store")
@@ -11,29 +10,15 @@ import { withRouter } from "react-router";
 class ResumeModify extends Component {
   constructor(props) {
     super(props);
-    this.state={'id':0,'title':'','content':''};
+    this.state={'id':0,'title':'','content':'',"redir":false};
   
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
 
-  // async componentWillMount()
-  // {
-  //   console.log('id:'+this.props.match.params.id);
-  //   this.props.store.get_curr_resume(this.props.match.params.id);
-  // }
-
-  // componentDidMount()
-  // {
-  //   console.log('id:'+this.props.store.curr_resume_id);
-  //   this.setState({"id":this.props.store.curr_resume_id,
-  //       "title":this.props.store.curr_resume_title,
-  //       "content":this.props.store.curr_resume_content});
-  // }
-
   async componentDidMount()
   {
-      const data = await this.props.store.get_resume( this.props.match.params.id );
+      const data = await this.props.store.get_curr_resume( this.props.match.params.id );
       
       if( parseInt( data.code , 10 ) === 0  )
           this.setState( {"id":data.data.id,"title":data.data.title,"content":data.data.content} );
@@ -47,7 +32,7 @@ class ResumeModify extends Component {
     this.setState(data);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     // console.log("submit");
     if( this.state.title.length === 0 ||  this.state.content.length === 0 )
     {
@@ -56,7 +41,14 @@ class ResumeModify extends Component {
         return false;
     }
   
-    this.props.store.resume_modify(this.state.id,this.state.title,this.state.content);
+    const data = await this.props.store.resume_modify(this.state.id,this.state.title,this.state.content);
+
+    console.log(data.code);
+
+    if( parseInt( data.code , 10 ) === 0  )
+        this.setState( {"redir":true} );
+    else
+        alert( data.error );   
   }
 
   render()
@@ -75,8 +67,8 @@ class ResumeModify extends Component {
             value={this.state.content }  onChange={(e)=>{this.handleChange(e,'content');}} >
             </Input>
           </FormGroup>
-          <Button color="primary" onClick={(e)=>this.handleSubmit(e)} >修改完成</Button>
-          { this.props.store.modified && <Redirect to={'/resume/:'+this.state.id} />}
+          <Button color="primary" className="modify_finished" onClick={(e)=>this.handleSubmit(e)} >修改完成</Button>
+          { this.state.redir && <Redirect to={'/myresume'} />}
         </Form>
       </div>
     );

@@ -1,14 +1,16 @@
 import React, { Component }  from 'react';
 import { Button, Form, FormGroup, Label, Input} from 'reactstrap';
 import { observer, inject } from 'mobx-react';
-import {Redirect } from 'react-router'
+import { Redirect } from 'react-router'
 
 @inject("store")
 @observer
-class Reg extends Component {
-  constructor(props) {
+class Reg extends Component 
+{
+  constructor(props) 
+  {
     super(props);
-    this.state = {'email': '','password':'','pw_confirm':''};
+    this.state = {'email': '','password':'','pw_confirm':'',"redir":false};
 
     this.handleChange = this.handleChange.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
@@ -20,10 +22,20 @@ class Reg extends Component {
     this.setState(data);
   }
 
-  handleSubmit(event) {
+  async handleSubmit(event) {
     // console.log("submit");
-    this.props.store.reg(this.state.email,this.state.password,this.state.pw_confirm);
-    event.preventDefault();
+    if( this.state.password !== this.state.pw_confirm )
+    {
+        alert("两次输入的密码不一致");
+        event.preventDefault();
+        return false;
+    }
+    const data = await this.props.store.reg(this.state.email,this.state.password,this.state.pw_confirm);
+
+    if(data.code === 0)
+      this.setState({'redir':true});
+    else
+      alert(data.err);
   }
 
   render()
@@ -47,8 +59,8 @@ class Reg extends Component {
             <Input type="password" name="pw_confirm"  className="form-control"  placeholder="请再次输入密码(6~12个字符)" 
             value={this.state.pw_confirm} onChange={(e)=>{this.handleChange(e,'pw_confirm');}} />
           </FormGroup>
-          <Button color="primary" onClick={this.handleSubmit} >注册</Button>
-          { this.props.store.reg_ok && <Redirect to="/login"/>}
+          <Button color="primary" id="user_reg" onClick={this.handleSubmit} >注册</Button>
+          { this.state.redir && <Redirect to="/login"/>}
         </Form>
       </div>
     );

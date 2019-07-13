@@ -4,20 +4,29 @@ import {Redirect } from 'react-router'
 
 @inject("store")
 @observer
-class Logout extends Component {
-  constructor(props) {
+class Logout extends Component 
+{
+  constructor(props) 
+  {
     super(props);
-    this.state={};
+    this.state={"redir":false};
   }
 
-  componentDidMount()
+  async componentDidMount()
   {
-    this.props.store.logout();
+    const data = await this.props.store.logout();
+    if(data.code === 0)
+      this.setState({'redir':true});
+    else
+      alert(data.err);
   }
 
   render()
   {
-    return <Redirect to="/index"/>;
+    return <div>
+      <h1>正在退出...</h1>
+      {this.state.redir && <Redirect to="/"/>}
+      </div>;
   }
 }
 

@@ -33,22 +33,24 @@ class autotestCest
         $content_v2 = $content."_v2";
 
         // 首页
-        $I->resizeWindow(1200, 1000);//防止界面太窄，菜单栏出不来
+        $I->resizeWindow(1000, 1000);//限制界面大小，默认让下拉按键出来
         $I->amOnPage("/");
-        $I->seeInTitle("最新简历");
+        $I->see("最新简历");
 
         // 注册用户
+        $I->click(".navbar-toggler");
+        $I->wait(1);
         $I->see("注册");
         $I->click('注册');
         $I->wait(1);
-        $I->seeInTitle("用户注册");
+        $I->see("用户注册");
         $I->fillField("email", $email);
         $I->fillField("password",$password);
         $I->fillField("pw_confirm",$password);
         $I->wait(1);
         $I->click('#user_reg');
         $I->wait(1);
-        $I->seeInTitle("用户登入");
+        $I->see("用户登入");
 
         // 用户登入
         $I->fillField('email',$email);
@@ -56,54 +58,54 @@ class autotestCest
         $I->wait(1);
         $I->click('#user_login');
         $I->wait(1);
-        $I->seeInTitle('我的简历');
+        $I->see('我的简历');
 
         // 添加简历
         $I->click('.resume_add');
         $I->wait(1);
-        $I->seeInTitle('添加简历');
+        $I->see('添加简历');
         $I->fillField('title',$title);
         $I->fillField('content',$content);
         $I->wait(2);
         $I->click('.btn');
         $I->wait(1);
-        $I->seeInTitle('我的简历');
+        $I->see('我的简历');
         $I->see($title);
 
         // 查看简历
         $I->click($title);
         $I->wait(2);
         $I->switchToNextTab();
-        $I->seeInTitle($title);
+        $I->see($title);
         $I->see($content); 
         $I->closeTab();
         $I->switchToPreviousTab();
-        $I->seeInTitle('我的简历');
+        $I->see('我的简历');
 
         // 修改简历
-        $I->click('#resume_modify');
+        $I->click('简历修改');
         $I->wait(1);
-        $I->seeInTitle('修改简历');
+        $I->see('修改简历');
         $I->fillField('title',$title);
         $I->fillField('content',$content_v2);
         $I->wait(2);
-        $I->click('#modify_finished');
+        $I->click('修改完成');
         $I->wait(1);
-        $I->seeInTitle('我的简历');
+        $I->see('我的简历');
         $I->see($title);
 
         // 查看简历
         $I->click($title);
         $I->wait(1);
         $I->switchToNextTab();
-        $I->seeInTitle($title);
+        $I->see($title);
         $I->see($content_v2); 
         $I->closeTab();
         $I->switchToPreviousTab();
-        $I->seeInTitle('我的简历');
+        $I->see('我的简历');
     
         // 删除简历
-        $I->click('#resume_delete');
+        $I->click('简历删除');
         $I->wait(1);
         $I->seeInPopup('真的要删除简历吗？');
         $I->acceptPopup();
@@ -111,10 +113,14 @@ class autotestCest
         $I->dontSee($title);
         
         // 用户登出
+        $I->click(".navbar-toggler");
+        $I->wait(1);
         $I->see("退出");
         $I->click('退出');
         $I->wait(1);
-        $I->seeInTitle("最新简历");
+        $I->see("最新简历");
+        $I->click(".navbar-toggler");
+        $I->wait(1);
         $I->see("登录");
     }
 }
