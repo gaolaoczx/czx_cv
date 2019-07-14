@@ -22,14 +22,14 @@ class Index extends Component
           <ListGroup>
             { resume_list.length > 0 && resume_list.map( (item)=>{
             return <ListGroupItem className="d-flex justify-content-between align-items-center" key={item.id} >
-              <Button color="light" href={'/resume/'+item.id} target="_blank">{item.title}</Button>
-              <Link to={'/resume/'+item.id} target="_blank"><img src="/open_in_new.png" alt="简历查看"/></Link>
+              <Button color="light" href={'./index.html#/resume/'+item.id} >{item.title}</Button>
+              <Link to={'/resume/'+item.id} ><img src="open_in_new.png" alt="简历查看"/></Link>
             </ListGroupItem>
             } ) }
 
             { resume_list.length === 0 && 
-            <Button color="light" href="/resume_add" className="resume_add">
-              <img src="/add.png" alt="添加简历" />暂时没有新简历，点击添加
+            <Button color="light" href="./index.html#/resume_add" className="resume_add">
+              <img src="add.png" alt="添加简历" />暂时没有新简历，点击添加
             </Button> }
             
           </ListGroup>

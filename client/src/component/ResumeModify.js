@@ -68,7 +68,7 @@ class ResumeModify extends Component {
             </Input>
           </FormGroup>
           <Button color="primary" className="modify_finished" onClick={(e)=>this.handleSubmit(e)} >修改完成</Button>
-          { this.state.redir && <Redirect to={'/myresume'} />}
+          { this.state.redir && <Redirect to={'./index.html#/myresume'} />}
         </Form>
       </div>
     );

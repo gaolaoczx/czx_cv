@@ -54,7 +54,7 @@ class ResumeAdd extends Component
             value={this.state.content} onChange={(e)=>{this.handleChange(e,'content');}} />
           </FormGroup>
           <Button className="btn" color="primary" onClick={(e)=>this.handleSubmit(e)}  >保存简历</Button>
-          { this.state.redir && <Redirect to="/myresume"/>}
+          { this.state.redir && <Redirect to="./index.html#/myresume"/>}
         </Form>
       </div>
     );

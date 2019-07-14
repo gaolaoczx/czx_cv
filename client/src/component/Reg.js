@@ -60,7 +60,7 @@ class Reg extends Component
             value={this.state.pw_confirm} onChange={(e)=>{this.handleChange(e,'pw_confirm');}} />
           </FormGroup>
           <Button color="primary" id="user_reg" onClick={this.handleSubmit} >注册</Button>
-          { this.state.redir && <Redirect to="/login"/>}
+          { this.state.redir && <Redirect to="./index.html#/login"/>}
         </Form>
       </div>
     );

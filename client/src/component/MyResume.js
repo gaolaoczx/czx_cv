@@ -37,22 +37,22 @@ class MyResume extends Component
             { resume_list.length > 0 && resume_list.map( (item)=>{
               // 在匿名函数内再次返回每个item的内容
             return <ListGroupItem className="d-flex justify-content-between align-items-center" key={item.id} >
-              <Button className="mr-auto" color="light" href={'/resume/'+item.id} target="_blank" key={item.id} >{item.title}</Button>
-              <a href={'/resume/'+item.id} target="_blank"><img src="/open_in_new.png" alt="简历查看"/></a>
-              <a href={'/resume_modify/'+item.id} ><img className="resume_modify" src="/mode_edit.png" alt="简历修改"/></a>
-              <a onClick={(e)=>{this.delete_confirm(item.id);}} ><img className="resume_delete" src="/close.png" alt="简历删除"/></a>
+              <Button className="mr-auto" color="light" href={'./index.html#/resume/'+item.id} key={item.id} >{item.title}</Button>
+              <a href={'./index.html#/resume/'+item.id}><img src="open_in_new.png" alt="简历查看"/></a>
+              <a href={'./index.html#/resume_modify/'+item.id} ><img className="resume_modify" src="mode_edit.png" alt="简历修改"/></a>
+              <a onClick={(e)=>{this.delete_confirm(item.id);}} ><img className="resume_delete" src="close.png" alt="简历删除"/></a>
             </ListGroupItem>
             } ) }
 
             { resume_list.length === 0 && 
-            <Button color="light" href="/resume_add" className="resume_add">
-              <img src="/add.png" alt="点击添加" />暂时没有新简历，点击添加
+            <Button color="light" href="./index.html#/resume_add" className="resume_add">
+              <img src="add.png" alt="点击添加" />暂时没有新简历，点击添加
             </Button> }
           </ListGroup>
 
             { resume_list.length > 0 && 
-            <Button color="light" href="/resume_add" className="resume_add">
-              <img src="/add.png" alt="添加简历" />添加新简历
+            <Button color="light" href="./index.html#/resume_add" className="resume_add">
+              <img src="add.png" alt="添加简历" />添加新简历
             </Button> }
       </div>
     );

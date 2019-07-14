@@ -1,7 +1,8 @@
 import { observable , action } from 'mobx'
 import axios from 'axios';
 
-var host='http://localhost:8088';
+// var host='http://localhost:8088';
+var host='http://www.glchenzexin.com';
 
 // 数据统一放在此处
 class AppState

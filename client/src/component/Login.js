@@ -55,7 +55,7 @@ class Login extends Component
           </FormGroup>
           <Button color="primary" id="user_login" onClick={this.handleSubmit} >登录</Button>
           {/* 登录正常后跳转页面 */}
-          { this.props.store.token && <Redirect to="/myresume"/>}
+          { this.props.store.token && <Redirect to="./index.html#/myresume"/>}
         </Form>
       </div>
     );

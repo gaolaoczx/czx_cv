@@ -25,7 +25,7 @@ class Logout extends Component
   {
     return <div>
       <h1>正在退出...</h1>
-      {this.state.redir && <Redirect to="/"/>}
+      {this.state.redir && <Redirect to="./index.html#/"/>}
       </div>;
   }
 }
